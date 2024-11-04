@@ -1,7 +1,7 @@
 Personal Financial Management Application
 
 <p align="center">
-  <img width="1425" alt="Screenshot 2024-04-24 at 5 39 14 PM" src="https://github.com/karamvirr/personal-financial-management/assets/21179214/520d7655-a7e5-466a-9e02-cc4c3d2a2b58">
+  <img width="1425" alt="Screenshot 2024-04-24 at 5 39 14 PM" src="https://github.com/Zulfi2003/FinAI/blob/main/client/Screenshot%202024-11-04%20at%202.15.48%E2%80%AFPM.png">
 </p>
 
 
