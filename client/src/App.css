@@ -1,0 +1,22 @@
+/* App.css */
+footer h5 {
+    color: #2d3748; /* Section heading color */
+  }
+  
+  footer ul li a {
+    color: #4a5568;
+    text-decoration: none;
+  }
+  
+  footer ul li a:hover {
+    text-decoration: underline;
+  }
+  
+  .social-icons i {
+    font-size: 1.2em;
+    color: #4a5568;
+  }
+  
+  .social-icons i:hover {
+    color: #2b6cb0;
+  }
