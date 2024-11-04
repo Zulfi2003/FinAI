@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { getFinancialData } from '../../pages/CashFlow';
 import { motion } from 'framer-motion';
 import aiLogo from './images.png';
@@ -15,34 +15,33 @@ const Section = ({ children }) => {
   const [isListening, setIsListening] = useState(false);        // Voice input status
   const [isLoading, setIsLoading] = useState(false);            // Loading state for API calls
 
-  // Speech recognition variable
-  let recognition;
+  // Use ref to hold the recognition instance
+  const recognitionRef = useRef(null);
 
   // Set up speech recognition
   useEffect(() => {
     // Check if browser supports speech recognition
     if ('webkitSpeechRecognition' in window) {
-      recognition = new window.webkitSpeechRecognition();
+      recognitionRef.current = new window.webkitSpeechRecognition();
 
       // Configure speech recognition settings
-      recognition.continuous = false;        // Stop listening after first result
-      recognition.interimResults = false;    // Only return final results
-      recognition.lang = "en-US";           // Set language to English
+      recognitionRef.current.continuous = false;
+      recognitionRef.current.interimResults = false;
+      recognitionRef.current.lang = "en-US";// Set language to English
 
       // Handle speech recognition results
-      recognition.onresult = (event) => {
+      recognitionRef.current.onresult = (event) => {
         const voiceMessage = event.results[0][0].transcript;
         setMessage(voiceMessage);
         handleSendMessage(voiceMessage);
       };
 
       // Reset listening state when recognition ends
-      recognition.onend = () => setIsListening(false);
+      recognitionRef.current.onend = () => setIsListening(false);
 
-      // Cleanup function to remove event listeners
-      return () => {
-        recognition.onresult = null;
-        recognition.onend = null;
+      recognitionRef.current.onerror = (event) => {
+        console.error('Speech recognition error detected:', event.error);
+        setIsListening(false);
       };
     } else {
       alert("Speech Recognition is not supported in this browser.");
@@ -172,15 +171,15 @@ const Section = ({ children }) => {
   const handleKeyDown = (e) => {
     if (e.key === "Enter") {
       e.preventDefault();
-      handleSendMessage();
+      handleSendMessage(message);
     }
   };
 
   // Start voice recognition
   const startListening = () => {
-    if (recognition) {
+    if (recognitionRef.current) {
       setIsListening(true);
-      recognition.start();
+      recognitionRef.current.start();
     }
   };
 
