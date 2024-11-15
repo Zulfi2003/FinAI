@@ -31,10 +31,11 @@ This personal finance application allows users to seamlessly connect their bank 
 
 To get started with this application, follow these steps:
 
-	1.	Clone the repository:
+1. Clone the repository:
 
-git clone https://github.com/Zulfi2003/FinAI.git
-cd personal-financial-management
+   ```bash
+   git clone https://github.com/Zulfi2003/FinAI.git
+   cd personal-financial-management
 
 
 	2.	Install backend dependencies:
