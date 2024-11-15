@@ -24,18 +24,17 @@ const provideFinancialAdvice = require('./ai_advice/ai_advisory'); // Adjust pat
 app.use('/links', require('./routes/links'));
 app.use('/plaid', require('./routes/plaid'));
 
-const userId = 'user';
 // New route for financial advice
 app.post('/api/advice', async (req, res) => {
   console.log("Received Data:", req.body);
-  const { totalBudget, totalIncome, totalSpend, savingsRate, userQuery } = req.body;
+  const { User, totalBudget, totalIncome, totalSpend, savingsRate, userQuery } = req.body;
 
   // Ensure all required fields are present
-  if (!totalBudget || !totalIncome || !totalSpend || !savingsRate|| !userQuery) {
+  if ( !User || !totalBudget || !totalIncome || !totalSpend || !savingsRate|| !userQuery) {
     return res.status(400).json({ error: 'All fields are required.' });
   }
   // console.log("In index.js");
-  // console.log("USER :", userId);
+  // console.log("USER :", User);
   // console.log("Total Budget:", totalBudget);
   // console.log("Total Income:", totalIncome);
   // console.log("Total Spend:", totalSpend);
@@ -43,7 +42,7 @@ app.post('/api/advice', async (req, res) => {
   // console.log("User Query:", userQuery);
 
   try {
-      const advice = await provideFinancialAdvice(userId, totalBudget, totalIncome, totalSpend, savingsRate, userQuery);
+      const advice = await provideFinancialAdvice(User, totalBudget, totalIncome, totalSpend, savingsRate, userQuery);
       res.json({ advice });
   } catch (error) {
       console.error('Error fetching financial advice:', error);

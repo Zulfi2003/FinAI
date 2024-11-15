@@ -136,10 +136,6 @@ const Auth = () => {
         {/* Bottom section with copyright */}
         <div className="border-t border-gray-300 mt-8 pt-4 text-center">
           <p>© 2024 FinAI. All rights reserved. Built with ❤️ in India.</p>
-          <div className="flex justify-center space-x-4 mt-2">
-            <a href="#"><img src="/path/to/app-store.png" alt="App Store" className="h-8" /></a>
-            <a href="#"><img src="/path/to/google-play.png" alt="Google Play" className="h-8" /></a>
-          </div>
         </div>
       </div>
     </footer>

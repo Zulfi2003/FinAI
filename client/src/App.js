@@ -1,4 +1,4 @@
-import React from 'react';
+import {React, useState} from 'react';
 import { BrowserRouter as Router, Route, Routes, Navigate, useLocation } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -86,11 +86,7 @@ const AppContent = () => {
       
           {/* Bottom section with copyright and app links */}
           <div className="border-t border-gray-300 mt-8 pt-4 text-center">
-            <p>© 2023 FinAI. All rights reserved. Built with ❤️ in India</p>
-            <div className="flex justify-center space-x-4 mt-2">
-              <a href="#"><img src="/path/to/app-store.png" alt="App Store" className="h-8" /></a>
-              <a href="#"><img src="/path/to/google-play.png" alt="Google Play" className="h-8" /></a>
-            </div>
+            <p>© 2024 FinAI. All rights reserved. Built with ❤️ in India</p>
           </div>
         </div>
       </footer>
@@ -101,22 +97,22 @@ const AppContent = () => {
 
 const App = () => {
   return (
-    <DataProvider>
-      <Router>
-        <AppContent />
-      </Router>
-      <ToastContainer
-        position="top-right"
-        autoClose={5000}
-        hideProgressBar={false}
-        newestOnTop
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-      />
-    </DataProvider>
+      <DataProvider>
+        <Router>
+          <AppContent />
+        </Router>
+        <ToastContainer
+          position="top-right"
+          autoClose={5000}
+          hideProgressBar={false}
+          newestOnTop
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+        />
+      </DataProvider>
   );
 };
 

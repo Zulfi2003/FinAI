@@ -6,10 +6,8 @@ import Card from '../components/UI/Card';
 import ExpenseSankeyDiagram from '../components/data-visualisations/ExpenseSankeyDiagram';
 import IncomeSankeyDiagram from '../components/data-visualisations/IncomeSankeyDiagram';
 import DropdownMenu from '../components/DropdownMenu';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import useAxios from '../hooks/use-axios';
-import { initialFinancialData } from '../store/financial_data'; // Import initial financial data
-
 
 const {
   getTransactionMonths,
@@ -35,12 +33,16 @@ const buildCard = (title, value, color, isPercent) => {
   );
 };
 
-let financialDataList = []; // Define a list to store financial data
-
 const CashFlow = () => {
   const [transactionData, setTransactionData] = useState(null);
   const [filteredTransactionData, setFilteredTransactionData] = useState(null);
-  const [financial_Data, setFinancialData] = useState(initialFinancialData); // Initialize with zero values
+  const [financialDataList, setFinancialDataList] = useState({
+    income: 0,
+    expenses: 0,
+    totalSavings: 0,
+    savingsRate: 0,
+  });
+
   const { error, sendRequest } = useAxios('/links', 'get');
 
   useEffect(() => {
@@ -62,53 +64,41 @@ const CashFlow = () => {
     }
   };
 
-  let expenses = 0;
-  let income = 0;
-  let totalSavings = 0;
-  let savingsRate = 0;
+  useEffect(() => {
+    if (filteredTransactionData) {
+      let expenses = 0;
+      let income = 0;
+      let totalSavings = 0;
+      let savingsRate = 0;
 
-  let expenseData = null;
-  let incomeData = null;
-  if (filteredTransactionData) {
-    expenseData = [['From', 'To', 'Amount']];
-    incomeData = [['From', 'To', 'Amount']];
+      filteredTransactionData.forEach(transaction => {
+        const name = getTransactionName(transaction);
+        let amount = transaction.amount;
 
-    filteredTransactionData.forEach(transaction => {
-      const name = getTransactionName(transaction);
-      let amount = transaction.amount;
-
-      if (!name.startsWith('Transfer From') && !transaction.pending) {
-        if (amount > 0) {
-          const category = humanize(
-            transaction.personal_finance_category.primary
-          );
-          expenses += amount;
-
-          expenseData.push(['Spending', category, amount]);
-          expenseData.push([category, name, amount]);
-        } else {
-          amount = Math.abs(amount);
-          income += amount;
-          incomeData.push([name, 'Income', amount]);
+        if (!name.startsWith('Transfer From') && !transaction.pending) {
+          if (amount > 0) {
+            expenses += amount;
+          } else {
+            income += Math.abs(amount);
+          }
         }
+      });
+
+      totalSavings = income - expenses;
+      if (totalSavings > 0) {
+        savingsRate = totalSavings / income;
       }
-    });
 
-    totalSavings = income - expenses;
-    if (totalSavings > 0) {
-      savingsRate = totalSavings / income;
+      setFinancialDataList({
+        income,
+        expenses,
+        totalSavings,
+        savingsRate,
+      });
+      const financialData = { income, expenses, totalSavings, savingsRate };
+      localStorage.setItem('financialDataList', JSON.stringify(financialData));
     }
-  }
-
-  // Update the financialDataList with the calculated values
-  financialDataList = {
-    income,
-    expenses,
-    totalSavings,
-    savingsRate,
-  };
-  
-  console.log("Financial Data Object:", financialDataList);
+  }, [filteredTransactionData]);
 
   return (
     <>
@@ -129,16 +119,16 @@ const CashFlow = () => {
                   excludeAllOption={true}
                 />
                 <div className='mb-5 grid grid-cols-4 gap-5'>
-                  {buildCard('Income', income, getColor(income))}
-                  {buildCard('Expenses', expenses, getColor(-expenses))}
+                  {buildCard('Income', financialDataList.income, getColor(financialDataList.income))}
+                  {buildCard('Expenses', financialDataList.expenses, getColor(-financialDataList.expenses))}
                   {buildCard(
                     'Total Savings',
-                    totalSavings,
-                    getColor(totalSavings)
+                    financialDataList.totalSavings,
+                    getColor(financialDataList.totalSavings)
                   )}
-                  {buildCard('Savings Rate', savingsRate, 'text-black', true)}
+                  {buildCard('Savings Rate', financialDataList.savingsRate, 'text-black', true)}
                 </div>
-                {expenseData && expenseData.length > 1 && (
+                {filteredTransactionData && financialDataList.expenses > 0 && (
                   <Card className='mb-5'>
                     <div className='px-5 pt-5'>
                       <p className='text-sm font-semibold text-gray-500'>
@@ -146,10 +136,18 @@ const CashFlow = () => {
                       </p>
                       <p className='text-xl font-bold'>Expenses</p>
                     </div>
-                    <ExpenseSankeyDiagram data={expenseData} />
+                    <ExpenseSankeyDiagram
+                      data={[['From', 'To', 'Amount'], ...filteredTransactionData
+                        .filter(transaction => transaction.amount > 0)
+                        .map(transaction => [
+                          'Spending',
+                          getTransactionName(transaction),
+                          transaction.amount
+                        ])]}
+                    />
                   </Card>
                 )}
-                {incomeData && incomeData.length > 1 && (
+                {filteredTransactionData && financialDataList.income > 0 && (
                   <Card className='mb-5'>
                     <div className='px-5 pt-5'>
                       <p className='text-sm font-semibold text-gray-500'>
@@ -157,7 +155,15 @@ const CashFlow = () => {
                       </p>
                       <p className='text-xl font-bold'>Income</p>
                     </div>
-                    <IncomeSankeyDiagram data={incomeData} />
+                    <IncomeSankeyDiagram
+                      data={[['From', 'To', 'Amount'], ...filteredTransactionData
+                        .filter(transaction => transaction.amount < 0)
+                        .map(transaction => [
+                          getTransactionName(transaction),
+                          'Income',
+                          Math.abs(transaction.amount)
+                        ])]}
+                    />
                   </Card>
                 )}
               </>
@@ -168,8 +174,5 @@ const CashFlow = () => {
     </>
   );
 };
-
-// Export the financialDataList for use in other files
-export const getFinancialData = () => financialDataList;
 
 export default CashFlow;

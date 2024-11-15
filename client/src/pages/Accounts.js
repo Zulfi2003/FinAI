@@ -5,10 +5,12 @@ import NetworkErrorMessage from '../components/NetworkErrorMessage';
 import Section from '../components/UI/Section';
 import AccountLink from '../components/AccountLink';
 import LinkAccountButton from '../components/LinkAccountButton';
+import { useUser } from '@clerk/clerk-react';
 
 const Accounts = () => {
   const [accountLinks, setAccountLinks] = useState(null);
   const { error, sendRequest } = useAxios('/links', 'get');
+  const { isSignedIn, user, isLoaded } = useUser();
 
   const updateAccountLinkHandler = data => {
     setAccountLinks(prevState => {
@@ -38,12 +40,18 @@ const Accounts = () => {
         setAccountLinks(response.data);
       });
     }
-  }, [accountLinks]);
+  }, [accountLinks, sendRequest]);
 
   return (
     <>
-      <Header title='Accounts' />
+      <Header title="Accounts" />
       <Section>
+        {isLoaded && isSignedIn && (
+          <div className="mb-6 text-xl font-bold flex justify-start pl-52">
+            Hello {user.fullName}!
+          </div>
+        )}
+        
         {error && error.message === 'Network Error' ? (
           <NetworkErrorMessage />
         ) : (
@@ -51,7 +59,7 @@ const Accounts = () => {
             {accountLinks && (
               <ul>
                 {accountLinks.map(link => (
-                  <li key={link._id} className='mb-5'>
+                  <li key={link._id} className="mb-5">
                     <AccountLink
                       data={link}
                       onUpdate={updateAccountLinkHandler}
