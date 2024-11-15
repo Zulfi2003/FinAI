@@ -1,12 +1,15 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useContext } from 'react';
 import { getFinancialData } from '../../pages/CashFlow';
+import { useUser } from '@clerk/clerk-react';
 import { motion } from 'framer-motion';
+import useAxios from '../../hooks/use-axios';
 import aiLogo from './images.png';
 
 const Section = ({ children }) => {
   // Get financial data from the CashFlow page
-  const financialData = getFinancialData();
-  const { income, expenses, totalSavings, savingsRate } = financialData || {};
+  const financialData = JSON.parse(localStorage.getItem('financialDataList'));
+    const { income, expenses, totalSavings, savingsRate } = financialData || {};
+  const { isSignedIn, user, isLoaded } = useUser();
 
   // State management
   const [isChatOpen, setIsChatOpen] = useState(false);          // Controls chat window visibility
@@ -18,8 +21,18 @@ const Section = ({ children }) => {
   // Use ref to hold the recognition instance
   const recognitionRef = useRef(null);
 
+  // console.log("financal data:: ", financialData);
+
+  useEffect(() => {
+    if(user){
+      localStorage.setItem('Userid', JSON.stringify(user.id));
+    }
+  },[user])
+
   // Set up speech recognition
   useEffect(() => {
+    console.log("User:" ,localStorage.getItem('Userid'));
+    
     // Check if browser supports speech recognition
     if ('webkitSpeechRecognition' in window) {
       recognitionRef.current = new window.webkitSpeechRecognition();
@@ -122,15 +135,18 @@ const Section = ({ children }) => {
       // Reset message input and show loading state
       setMessage("");
       setIsLoading(true);
-
       // Prepare data for API call
       const bodyData = {
+        User:  localStorage.getItem('Userid'),
         totalBudget: totalSavings,
         totalIncome: income,
         totalSpend: expenses,
         savingsRate: savingsRate,
         userQuery: msg,
       };
+
+      
+      
 
       try {
         // Make API call to get AI advice
@@ -187,13 +203,6 @@ const Section = ({ children }) => {
     <section className="mx-auto my-5 w-11/12 grow relative">
       {children}
 
-      {/* Floating AI Advisor Button
-      <button
-        className="fixed bottom-5 right-5 p-4 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 text-white shadow-xl hover:shadow-2xl hover:from-blue-600 hover:to-purple-600 transition-all duration-300 ease-in-out"
-        onClick={toggleChat}
-      >
-        AI Advisor
-      </button> */}
       {/* AI Advisor Button */}
       <motion.button
         className="fixed bottom-5 right-5 p-2 flex flex-col items-center rounded-lg bg-gradient-to-r from-blue-500 to-purple-500 text-white shadow-lg hover:shadow-2xl hover:from-blue-600 hover:to-purple-600 transition-transform transform hover:scale-105 duration-300 ease-in-out"
