@@ -33,7 +33,7 @@ To get started with this application, follow these steps:
 
 	1.	Clone the repository:
 
-git clone https://github.com/karamvirr/personal-financial-management.git
+git clone https://github.com/Zulfi2003/FinAI.git
 cd personal-financial-management
 
 
