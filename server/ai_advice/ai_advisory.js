@@ -9,7 +9,7 @@ dotenv.config();
 const token = process.env.GITHUB_TOKEN;
 const endpoint = "https://models.inference.ai.azure.com";
 const miniModelName = "gpt-4o-mini";
-const mainModelName = "gpt-4o-mini";
+const mainModelName = "gpt-4o";
 
 // Sentiment analysis instance
 const sentiment = new Sentiment();
