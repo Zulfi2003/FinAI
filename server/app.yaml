@@ -1,0 +1,23 @@
+runtime: nodejs20
+instance_class: F2
+
+env_variables:
+  NODE_ENV: "production"
+  PORT: "8080"
+  DEMO_MODE: "False"
+  PLAID_CLIENT_ID: "671c793ee89c32001af9f0bf"
+  PLAID_SECRET: "0707ed08647a1f20aa4fe958f470e4"
+  PLAID_ENV: "sandbox"
+  PLAID_PRODUCTS: "auth,transactions"
+  PLAID_COUNTRY_CODES: "US"
+  MONGODB_CLUSTER_URL: "mongodb+srv://user:uday83@cluster0.oth2d.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
+  GITHUB_TOKEN: "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"
+  FRONTEND_URL: "http://localhost:3000"  # Replace with real deployed frontend URL later
+
+automatic_scaling:
+  min_instances: 1
+  max_instances: 3
+
+handlers:
+  - url: /.*
+    script: auto
