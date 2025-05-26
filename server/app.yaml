@@ -11,7 +11,7 @@ env_variables:
   PLAID_PRODUCTS: "auth,transactions"
   PLAID_COUNTRY_CODES: "US"
   MONGODB_CLUSTER_URL: "mongodb+srv://user:uday83@cluster0.oth2d.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
-  GITHUB_TOKEN: "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"
+  GITHUB_TOKEN: "XXX_XXXX8xfTQLdIlwXbrLUg5pcKzrzopXXXXPAk"
   FRONTEND_URL: "http://localhost:3000"  # Replace with real deployed frontend URL later
 
 automatic_scaling:
